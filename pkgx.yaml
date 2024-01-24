@@ -1,0 +1,89 @@
+env:
+  OS_CLOUD: openstack
+  CONSTRUCTOR_REPO_PATH: $(pwd)
+
+  PACKER_LOG: 1
+  PKR_VAR_TARGET_IMAGE_MANIFEST: ${CONSTRUCTOR_REPO_PATH}/manifest.json
+  PKR_VAR_SKIP_IMAGE_CREATION: 'false'
+  #PKR_VAR_IMAGE_VISIBILITY: shared
+  #PKR_VAR_IMAGE_MEMBERS: '["mathrice-ci"]'
+  PKR_VAR_CONSTRUCTOR_EXEC_PROVISIONER_TASK_INSTALL: 'true'
+  PKR_VAR_OS_CLOUD: ${OS_CLOUD}
+  PKR_VAR_FLAVOR_NAME: vd.2
+  PKR_VAR_FLOATING_IP_NETWORK: public-2
+  PKR_VAR_NETWORK_DISCOVERY_CIDRS: 192.168.199.0/24
+
+  PKR_VAR_SOURCE_IMAGE_URL: https://cloud-images.ubuntu.com/releases/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64-disk-kvm.img
+  PKR_VAR_VOLUME_SIZE: 20
+  PKR_VAR_TARGET_SSH_USERNAME: ubuntu
+  PKR_VAR_SYSTEM_DISTRIBUTION_NAME: ubuntu
+  PKR_VAR_SYSTEM_DISTRIBUTION_VERSION_NUMBER: 20.04
+  PKR_VAR_SYSTEM_DISTRIBUTION_VERSION_NAME: focal
+  PKR_VAR_SYSTEM_DISTRIBUTION_ARCH: x86_64
+
+  PKR_VAR_PACKER_FIRMWARE_NAME: bios
+
+  PKR_VAR_TARGET_IMAGE_BUILD_UUID: $( uuidgen )
+  PKR_VAR_TARGET_IMAGE_BUILD_TAG: ci
+  PKR_VAR_TARGET_IMAGE_BUILD_VERSION: v0.1
+  PKR_VAR_TARGET_IMAGE_BUILD_OWNER: gt-cloud
+  PKR_VAR_TARGET_IMAGE_BUILD_ORGANIZATION: resinfo
+
+  PKR_VAR_TARGET_IMAGE_BUILD_YEAR: $( date '+%Y' )
+  PKR_VAR_TARGET_IMAGE_BUILD_MONTH: $( date '+%m' )
+  PKR_VAR_TARGET_IMAGE_BUILD_DAY: $( date '+%d' )
+  PKR_VAR_TARGET_IMAGE_BUILD_TIME: $( date '+%H%M%S' )
+  PKR_VAR_TARGET_IMAGE_BUILD_DATETIME: |
+      $(
+          printf '%s%s%s%s' \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_YEAR} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_MONTH} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_DAY} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_TIME}
+      )
+
+  PKR_VAR_BUILD_TOOL_NAME: 'packer'
+  PKR_VAR_BUILD_TOOL_VERSION: |
+      "$(
+          PACKER_LOG=0 packer version | cut -d ' ' -f 2
+      )"
+
+  PKR_VAR_TARGET_IMAGE_FORMAT: 'raw'
+
+  PKR_VAR_TARGET_IMAGE_NAME: |
+      $(
+          printf '%s-%s-%s-%s-%s-%s-%s-%s-%s-%s.%s' \
+                 ${PKR_VAR_SYSTEM_DISTRIBUTION_NAME} \
+                 ${PKR_VAR_SYSTEM_DISTRIBUTION_VERSION_NUMBER} \
+                 ${PKR_VAR_SYSTEM_DISTRIBUTION_VERSION_NAME} \
+                 ${PKR_VAR_SYSTEM_DISTRIBUTION_ARCH} \
+                 ${PKR_VAR_PACKER_FIRMWARE_NAME} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_ORGANIZATION} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_TAG} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_VERSION} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_OWNER} \
+                 ${PKR_VAR_TARGET_IMAGE_BUILD_DATETIME} \
+                 ${PKR_VAR_TARGET_IMAGE_FORMAT}
+      )
+
+  PKR_VAR_VOLUME_NAME: ${PKR_VAR_TARGET_IMAGE_NAME}
+
+#  PKR_VAR_CONSTRUCTOR_EXEC_POST_PROCESSOR_TASK_INSTALL: 'true'
+
+#PROVISIONER_REPOSITORY:'git@plmlab.math.cnrs.fr:plmteam/common/sup/plm.git'
+  #PROVISIONER_DIR:'provisioner'
+  #PKR_VAR_GOMPLATE_RELEASE_VERSION:'3.9.0'
+  #PKR_VAR_CONSUL_TEMPLATE_RELEASE_VERSION:'0.26.0'
+  #PKR_VAR_POWERLINE_GO_RELEASE_VERSION:'1.21.0'
+  #PKR_VAR_DIRENV_RELEASE_VERSION:'2.28.0'
+
+
+dependencies:
+  gnu.org/coreutils: '*'
+  uuidgen: '*'
+  taskfile.dev: '*'
+  packer.io: '*'
+  terraform.io: ^1.6
+  jetporch.com: '*'
+  openssh.com: '*'
+  pkgx: '1.0.0'
