@@ -6,7 +6,7 @@ dotenv:
 includes:
   constructor:
     taskfile: '.constructor/Taskfile.yml'
-    dir: '.constructor'
+    dir: ".constructor"
     optional: true
 
   provisioner:
