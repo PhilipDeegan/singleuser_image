@@ -3,3 +3,4 @@ clouds.yaml
 .constructor/
 manifest.json
 temp/
+build.env
