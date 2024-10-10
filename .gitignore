@@ -4,3 +4,4 @@ clouds.yaml
 manifest.json
 temp/
 build.env
+.venv

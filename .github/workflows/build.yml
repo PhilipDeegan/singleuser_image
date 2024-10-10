@@ -11,39 +11,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  fedora:
     runs-on: ubuntu-latest
     container: fedora:40
     steps:
-    - uses: actions/checkout@v3
-
+    - uses: actions/checkout@v3 # v4 doesn't work with containers https://github.com/actions/checkout/issues/1487
     - uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
+    - run: ./etc/run_fedora.sh
 
-    - name: run
-      run: |
-        set -ex
-        sudo yum install -y dnf-plugins-core
-        sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
-        curl -o ./pkgx --compressed -f --proto '=https' https://pkgx.sh/$(uname)/$(uname -m)
-        chmod +x pkgx && mv pkgx /usr/local/bin
-        sudo dnf install -y go-task terraform ansible packer gcc
-        [ -f "/usr/bin/task" ] && echo "task symlink error" && exit 1
-        sudo ln -s /usr/bin/go-task /usr/bin/task
-        python3 -m venv .venv
-        (
-          set -ex
-          . .venv/bin/activate
-          export PATH="$PWD/.venv/bin:$PATH"
-          python3 -m pip install pip -U
-          python3 -m pip install Cython
-          python3 -m pip install python-openstackclient
-          openstack --version || (echo "no openstack install error" && exit 1)
-          task init
-          cp .constructor/build.env.sample build.env
-          task
-          task constructor:init
-          task provisioner:init
-          task constructor:fetch
-        )
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - run: ./etc/run_ubuntu.sh
