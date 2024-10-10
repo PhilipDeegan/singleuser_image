@@ -1,0 +1,11 @@
+##
+# Dockfile provided to test pkgx in isolation
+# execute from projecr too such that the following command is valid
+#   docker build --progress plain --no-cache -t ubuntu:singleuser_image -f etc/docker/Dockerfile_ubuntu .
+#
+FROM ubuntu:latest
+
+WORKDIR /root
+COPY etc /root/etc
+COPY Task* /root
+RUN cd etc && chmod +x run_ubuntu.sh && ./run_ubuntu.sh && rm -rf /root/*

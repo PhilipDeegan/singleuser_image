@@ -1,0 +1,31 @@
+name: UnauthedTest
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 12 1,15 * *" # noon on the 1st and 15th of the month
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  fedora:
+    runs-on: ubuntu-latest
+    container: fedora:40
+    steps:
+    - uses: actions/checkout@v3 # v4 doesn't work with containers https://github.com/actions/checkout/issues/1487
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - run: ./etc/run_fedora.sh
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - run: ./etc/run_ubuntu.sh

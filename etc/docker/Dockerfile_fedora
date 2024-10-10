@@ -1,0 +1,11 @@
+##
+# Dockfile provided to test pkgx in isolation
+# execute from projecr too such that the following command is valid
+#   docker build --progress plain --no-cache -t ubuntu:singleuser_image -f etc/docker/Dockerfile_fedora .
+#
+FROM fedora:latest
+
+WORKDIR /root
+COPY etc /root/etc
+COPY Task* /root
+RUN dnf install -y glibc-headers && cd etc && chmod +x run_fedora.sh && ./run_fedora.sh && rm -rf /root/*
